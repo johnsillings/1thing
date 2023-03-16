@@ -1,4 +1,5 @@
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
@@ -56,3 +57,8 @@ def submit_link(request):
     else:
         form = LinkForm()
     return render(request, 'links/submit_link.html', {'form': form})
+
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+    links = Link.objects.filter(user=user).order_by('-created_at')
+    return render(request, 'links/profile.html', {'user': user, 'links': links})
