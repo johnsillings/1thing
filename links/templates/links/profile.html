@@ -1,0 +1,6 @@
+{% extends 'links/base.html' %}
+
+{% block content %}
+    <h1>{{ profile_user.username }}'s Profile</h1>
+    <ul>
+        {% for link in profile_user.link_set.all %}
