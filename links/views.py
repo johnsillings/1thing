@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView, ListView, DetailView
 from .models import Link, Follower, User
 from .forms import LinkForm
@@ -24,6 +24,11 @@ class ProfileView(DetailView):
     context_object_name = 'profile_user'
     model = User
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['links'] = Link.objects.filter(user=self.object).order_by('-created_at')
+        return context
+
 class CustomLoginView(LoginView):
     template_name = 'links/login.html'
 
@@ -40,7 +45,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return redirect('links:home')
     else:
         form = UserCreationForm()
     return render(request, 'links/signup.html', {'form': form})
@@ -60,5 +65,5 @@ def submit_link(request):
 
 def profile(request, username):
     user = get_object_or_404(User, username=username)
-    links = Link.objects.filter(user=user).order_by('-created_at')
+    links = Link.objects.filter(user=user).order_by('-shared_at')
     return render(request, 'links/profile.html', {'user': user, 'links': links})

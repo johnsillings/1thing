@@ -1,14 +1,16 @@
 {% extends 'links/base.html' %}
 
 {% block content %}
-    <h1>{{ user.username }}'s Profile</h1>
-    {% for link in links %}
-        <div>
-            <h2><a href="{{ link.url }}">{{ link.title }}</a></h2>
-            <p>{{ link.description }}</p>
-            <small>Submitted by {{ link.user.username }} on {{ link.created_at }}</small>
-        </div>
-    {% empty %}
-        <p>No links to display.</p>
-    {% endfor %}
+    <h1>{{ profile_user.username }}'s Profile</h1>
+    <h2>Submitted Links</h2>
+    <ul>
+        {% for link in links %}
+            <li>
+                <a href="{{ link.url }}">{{ link.title }}</a>
+                <p>{{ link.description }}</p>
+            </li>
+        {% empty %}
+            <li>No links submitted yet.</li>
+        {% endfor %}
+    </ul>
 {% endblock %}
